@@ -722,16 +722,7 @@ h1 {
 }
 
 </style>
-      
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js">
-      window.addEventListener("load", function () {
-    const params = new URLSearchParams(window.location.search);
 
-    if (params.get("camera") === "on") {
-        startCamera();
-    }
-});</script>
-      
 </head>
 
 
@@ -907,23 +898,15 @@ h1 {
 
         </p>
 
-<div id="guideModal">
-    <div class="guide-content">
-        <h2>퍼즐을 찾아보세요</h2>
 
         <button
             class="camera-button"
             onclick="startCamera()">
+
             📷 카메라 켜기
+
         </button>
 
-        <button
-            class="close-button"
-            onclick="closeGuide()">
-            닫기
-        </button>
-    </div>
-</div>
 
         <button
             class="close-button"
@@ -945,7 +928,7 @@ h1 {
 ========================= -->
 
 <div
-    class="camera-screen"
+     class="camera-screen"
     id="cameraScreen">
 
 
@@ -955,40 +938,7 @@ h1 {
         playsinline>
     </video>
 
-      <div id="puzzleOverlay" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:9999;
-    background:white;
-">
-    <iframe
-        id="puzzleFrame"
-        style="width:100%; height:100%; border:none;">
-    </iframe>
-
-    <button
-        onclick="closePuzzle()"
-        style="
-            position:absolute;
-            top:20px;
-            right:20px;
-            z-index:10000;
-        ">
-        ✕ 닫기
-    </button>
-</div>
-
-    <div class="camera-guide"
-           class="camera-screen"
-    id="cameraScreen">
-
-
-    <video
-        id="camera"
-        autoplay
-        playsinline>
-    </video>>
+    <div class="camera-guide">
 
         <h2>
             퍼즐을 찾아보세요
@@ -1080,15 +1030,8 @@ async function startCamera() {
             .getElementById("cameraScreen")
             .classList.add("show");
 
-          document
-    .getElementById("cameraScreen")
-    .classList.add("show");
-
-startQRScanner();
 
     }
-        
-
 
     catch (error) {
 
@@ -1106,70 +1049,26 @@ startQRScanner();
    카메라 종료
 ========================= */
 
-      let qrScanTimer = null;
-
-function startQRScanner() {
-    const video = document.getElementById("camera");
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-
-    function scan() {
-        if (!stream || video.readyState < 2) {
-            qrScanTimer = requestAnimationFrame(scan);
-            return;
-        }
-
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        ctx.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        const imageData = ctx.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-        const code = jsQR(
-            imageData.data,
-            imageData.width,
-            imageData.height
-        );
-
-        if (code) {
-            window.location.href = code.data;
-            return;
-        }
-
-        qrScanTimer = requestAnimationFrame(scan);
-    }
-
-    scan();
-}
-
 function stopCamera() {
+
     if (stream) {
+
         stream
             .getTracks()
             .forEach(track => track.stop());
 
         stream = null;
+
     }
+
 
     document
         .getElementById("cameraScreen")
         .classList.remove("show");
-}</html>
 
-      </script>
+}
+
+</script>
 
 
 </body>
