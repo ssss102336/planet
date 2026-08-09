@@ -722,7 +722,9 @@ h1 {
 }
 
 </style>
-
+      
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+      
 </head>
 
 
@@ -1031,8 +1033,15 @@ async function startCamera() {
             .getElementById("cameraScreen")
             .classList.add("show");
 
+          document
+    .getElementById("cameraScreen")
+    .classList.add("show");
+
+startQRScanner();
 
     }
+        
+
 
     catch (error) {
 
@@ -1050,6 +1059,56 @@ async function startCamera() {
    카메라 종료
 ========================= */
 
+      let qrScanTimer = null;
+
+function startQRScanner() {
+    const video = document.getElementById("camera");
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    function scan() {
+        if (!stream || video.readyState < 2) {
+            qrScanTimer = requestAnimationFrame(scan);
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const imageData = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const code = jsQR(
+            imageData.data,
+            imageData.width,
+            imageData.height
+        );
+
+        if (code) {
+            // QR에 들어있는 주소로 이동
+            window.location.href = code.data;
+            return;
+        }
+
+        qrScanTimer = requestAnimationFrame(scan);
+    }
+
+    scan();
+}
+      
 function stopCamera() {
 
     if (stream) {
