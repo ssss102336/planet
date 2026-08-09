@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>어린왕자와 행성</title>
+
+<style>
+
+/* =========================
+   기본 설정
+========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    font-family:
+        "Noto Serif KR",
+        "Noto Serif",
+        serif;
+
+    color: #eee8dc;
+
+    background: #080d1c;
+
+    overflow-x: hidden;
+
+}
+
+
+/* =========================
+   우주 배경
+========================= */
+
+.space {
+
+    min-height: 100vh;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(72, 80, 125, .28),
+            transparent 38%
+        ),
+
+        radial-gradient(
+            circle at 15% 85%,
+            rgba(100, 72, 100, .18),
+            transparent 30%
+        ),
+
+        #080d1c;
+
+}
+
+
+/* 별 */
+
+.star {
+
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    opacity: .5;
+
+    animation: twinkle 4s infinite ease-in-out;
+
+}
+
+@keyframes twinkle {
+
+    0%, 100% {
+        opacity: .2;
+    }
+
+    50% {
+        opacity: .9;
+    }
+
+}
+
+
+/* =========================
+   별 위치
+========================= */
+
+.star:nth-child(1) {
+    top: 8%;
+    left: 12%;
+}
+
+.star:nth-child(2) {
+    top: 17%;
+    left: 30%;
+}
+
+.star:nth-child(3) {
+    top: 11%;
+    left: 72%;
+}
+
+.star:nth-child(4) {
+    top: 26%;
+    left: 88%;
+}
+
+.star:nth-child(5) {
+    top: 35%;
+    left: 8%;
+}
+
+.star:nth-child(6) {
+    top: 42%;
+    left: 22%;
+}
+
+.star:nth-child(7) {
+    top: 31%;
+    left: 56%;
+}
+
+.star:nth-child(8) {
+    top: 49%;
+    left: 92%;
+}
+
+.star:nth-child(9) {
+    top: 66%;
+    left: 10%;
+}
+
+.star:nth-child(10) {
+    top: 75%;
+    left: 34%;
+}
+
+.star:nth-child(11) {
+    top: 83%;
+    left: 70%;
+}
+
+.star:nth-child(12) {
+    top: 69%;
+    left: 88%;
+}
+
+.star:nth-child(13) {
+    top: 90%;
+    left: 20%;
+}
+
+.star:nth-child(14) {
+    top: 55%;
+    left: 45%;
+}
+
+
+/* =========================
+   메인 소개
+========================= */
+
+.main {
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 80px 25px;
+
+}
+
+
+.story {
+
+    width: 100%;
+
+    max-width: 760px;
+
+    text-align: center;
+
+}
+
+
+/* 작은 제목 */
+
+.eyebrow {
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    color: #aaa7b5;
+
+    margin-bottom: 28px;
+
+}
+
+
+/* 제목 */
+
+h1 {
+
+    font-size:
+        clamp(30px, 6vw, 52px);
+
+    font-weight: 400;
+
+    line-height: 1.5;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 45px;
+
+}
+
+
+/* 본문 */
+
+.story-text {
+
+    font-size:
+        clamp(14px, 2vw, 17px);
+
+    line-height: 2.2;
+
+    color: #d0cbd0;
+
+    word-break: keep-all;
+
+}
+
+
+/* 마지막 문장 */
+
+.final-line {
+
+    margin-top: 45px;
+
+    font-size:
+        clamp(17px, 3vw, 23px);
+
+    line-height: 1.8;
+
+    color: #f0e7d5;
+
+}
+
+
+/* =========================
+   버튼
+========================= */
+
+.puzzle-button {
+
+    margin-top: 45px;
+
+    padding: 15px 34px;
+
+    border-radius: 40px;
+
+    border: 1px solid rgba(255,255,255,.35);
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: #eee8dc;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: .3s ease;
+
+}
+
+
+.puzzle-button:hover {
+
+    background:
+        rgba(255,255,255,.13);
+
+    transform:
+        translateY(-3px);
+
+}
+
+
+/* =========================
+   팝업 배경
+========================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: none;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 25px;
+
+    background:
+        rgba(2, 5, 15, .78);
+
+    backdrop-filter:
+        blur(8px);
+
+}
+
+
+.modal.show {
+
+    display: flex;
+
+}
+
+
+/* =========================
+   팝업
+========================= */
+
+.modal-box {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    padding: 42px 30px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(31,38,65,.96),
+            rgba(12,17,34,.97)
+        );
+
+    text-align: center;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,.45);
+
+    animation:
+        modalIn .4s ease;
+
+}
+
+
+@keyframes modalIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+.modal-icon {
+
+    font-size: 32px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.modal-box h2 {
+
+    font-size: 25px;
+
+    font-weight: 400;
+
+    margin-bottom: 25px;
+
+}
+
+
+.modal-box p {
+
+    font-size: 14px;
+
+    line-height: 2;
+
+    color: #ccc7cf;
+
+    word-break: keep-all;
+
+}
+
+
+/* =========================
+   카메라 버튼
+========================= */
+
+.camera-button {
+
+    margin-top: 30px;
+
+    padding: 14px 30px;
+
+    border: none;
+
+    border-radius: 30px;
+
+    background: #eee8dc;
+
+    color: #171a25;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+}
+
+
+.camera-button:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* 닫기 */
+
+.close-button {
+
+    display: block;
+
+    margin: 18px auto 0;
+
+    border: none;
+
+    background: none;
+
+    color: #8f8d99;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+}
+
+
+/* =========================
+   카메라 화면
+========================= */
+
+.camera-screen {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 200;
+
+    display: none;
+
+    background: #000;
+
+}
+
+
+.camera-screen.show {
+
+    display: block;
+
+}
+
+
+/* 카메라 영상 */
+
+#camera {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+/* 카메라 위 안내 */
+
+.camera-guide {
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    padding: 35px 20px 20px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.6),
+            transparent
+        );
+
+}
+
+
+.camera-guide h2 {
+
+    font-size: 20px;
+
+    font-weight: 400;
+
+}
+
+
+.camera-guide p {
+
+    margin-top: 8px;
+
+    font-size: 12px;
+
+    color: #ddd;
+
+}
+
+
+/* 카메라 프레임 */
+
+.scan-frame {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: min(72vw, 330px);
+
+    height: min(72vw, 330px);
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(255,255,255,.65);
+
+    border-radius: 18px;
+
+}
+
+
+.scan-frame::before,
+.scan-frame::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 35px;
+
+    height: 35px;
+
+    border-color: white;
+
+    border-style: solid;
+
+}
+
+
+.scan-frame::before {
+
+    top: -2px;
+    left: -2px;
+
+    border-width:
+        3px 0 0 3px;
+
+    border-radius:
+        10px 0 0 0;
+
+}
+
+
+.scan-frame::after {
+
+    right: -2px;
+    bottom: -2px;
+
+    border-width:
+        0 3px 3px 0;
+
+    border-radius:
+        0 0 10px 0;
+
+}
+
+
+/* 카메라 닫기 */
+
+.camera-close {
+
+    position: absolute;
+
+    right: 20px;
+    bottom: 30px;
+
+    z-index: 5;
+
+    padding: 12px 22px;
+
+    border-radius: 25px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.4);
+
+    background:
+        rgba(0,0,0,.45);
+
+    color: white;
+
+    font-family: inherit;
+
+    cursor: pointer;
+
+}
+
+
+/* =========================
+   모바일
+========================= */
+
+@media (max-width: 600px) {
+
+    .main {
+
+        padding:
+            65px 22px;
+
+    }
+
+    .story-text {
+
+        font-size: 13px;
+
+        line-height: 2.05;
+
+    }
+
+    .modal-box {
+
+        padding:
+            35px 22px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="space">
+
+
+    <!-- 별 -->
+
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+
+
+
+    <!-- =====================
+         행성 소개
+    ====================== -->
+
+    <main class="main">
+
+        <section class="story">
+
+
+            <div class="eyebrow">
+                THE LITTLE PRINCE · JOURNEY
+            </div>
+
+
+            <h1>
+                더 넓은 세상으로
+            </h1>
+
+
+            <div class="story-text">
+
+                <p>
+                    철새들의 이동을 틈타 별을 빠져나온
+                    어린왕자는 이제 더 넓은 세상을 향해 나아갑니다.
+                </p>
+
+                <br>
+
+                <p>
+                    손에 잡히지 않는 어둠 속을 여행하며
+                    6개의 행성에 살고 있는
+                    <strong>
+                        왕, 허영쟁이, 주정뱅이, 사업가,
+                        점등인, 지리학자
+                    </strong>
+                    를 만나게 됩니다.
+                </p>
+
+                <br>
+
+                <p>
+                    어린왕자는 자신의 행성이라는 작은 세상에서 벗어나
+                    더 넓은 우주 속 행성들을 지나며
+                    세상을 이해하는 조각들을 모아갑니다.
+                </p>
+
+                <br>
+
+                <p>
+                    여러분들도 어린왕자와 함께 행성을 탐험하며
+                    퍼즐 조각을 하나씩 모아보세요.
+                </p>
+
+                <br>
+
+                <p>
+                    퍼즐은 조각 하나만으로는 온전한 모습이 될 수 없습니다.
+                    마찬가지로 어린왕자의 성장 역시
+                    자신의 행성을 떠나 각각의 만남과 경험이 쌓여
+                    하나의 여정이 되었죠.
+                </p>
+
+                <br>
+
+                <p>
+                    흩어져 있을 때는 그 의미를 알기 어려웠지만
+                    조각들이 모여야 그림이 완성되는 퍼즐과 닮지 않았나요?
+                </p>
+
+            </div>
+
+
+            <div class="final-line">
+
+                너무 두려워하지 말고 나아가,<br>
+                <strong>어둠 속 퍼즐을 찾아주세요.</strong>
+
+            </div>
+
+
+            <!-- 안내문 열기 -->
+
+            <button
+                class="puzzle-button"
+                onclick="openGuide()">
+
+                퍼즐을 찾아보세요 →
+
+            </button>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================
+     안내문 팝업
+========================= -->
+
+<div
+    class="modal"
+    id="guideModal">
+
+
+    <div class="modal-box">
+
+
+        <div class="modal-icon">
+            ✦
+        </div>
+
+
+        <h2>
+            퍼즐을 찾아보세요
+        </h2>
+
+
+        <p>
+
+            어린왕자가 만난 여섯 개의 행성에는<br>
+            그의 여정을 담은 퍼즐 조각이 하나씩 숨겨져 있습니다.
+
+            <br><br>
+
+            카메라를 켜고 주변을 천천히 살펴보세요.
+
+            <br>
+
+            숨겨진 퍼즐 조각을 발견하면<br>
+            하나씩 모을 수 있습니다.
+
+            <br><br>
+
+            여섯 개의 조각이 모두 모였을 때<br>
+            어린왕자의 여정이 하나의 그림으로 완성됩니다.
+
+            <br><br>
+
+            준비가 되었다면,<br>
+            카메라를 켜주세요.
+
+        </p>
+
+
+        <button
+            class="camera-button"
+            onclick="startCamera()">
+
+            📷 카메라 켜기
+
+        </button>
+
+
+        <button
+            class="close-button"
+            onclick="closeGuide()">
+
+            나중에 하기
+
+        </button>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     카메라 화면
+========================= -->
+
+<div
+    class="camera-screen"
+    id="cameraScreen">
+
+
+    <video
+        id="camera"
+        autoplay
+        playsinline>
+    </video>
+
+
+    <div class="camera-guide">
+
+        <h2>
+            퍼즐을 찾아보세요
+        </h2>
+
+        <p>
+            주변을 천천히 살펴보세요.
+        </p>
+
+    </div>
+
+
+    <div class="scan-frame"></div>
+
+
+    <button
+        class="camera-close"
+        onclick="stopCamera()">
+
+        카메라 닫기
+
+    </button>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   안내문
+========================= */
+
+function openGuide() {
+
+    document
+        .getElementById("guideModal")
+        .classList.add("show");
+
+}
+
+
+function closeGuide() {
+
+    document
+        .getElementById("guideModal")
+        .classList.remove("show");
+
+}
+
+
+/* =========================
+   카메라
+========================= */
+
+let stream = null;
+
+
+async function startCamera() {
+
+    try {
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    }
+                },
+
+                audio: false
+
+            });
+
+
+        document
+            .getElementById("camera")
+            .srcObject = stream;
+
+
+        document
+            .getElementById("guideModal")
+            .classList.remove("show");
+
+
+        document
+            .getElementById("cameraScreen")
+            .classList.add("show");
+
+
+    }
+
+    catch (error) {
+
+        alert(
+            "카메라를 사용할 수 없습니다.\n" +
+            "브라우저의 카메라 권한을 확인해주세요."
+        );
+
+    }
+
+}
+
+
+/* =========================
+   카메라 종료
+========================= */
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(track => track.stop());
+
+        stream = null;
+
+    }
+
+
+    document
+        .getElementById("cameraScreen")
+        .classList.remove("show");
+
+}
+
+</script>
+
+
+</body>
+
+</html>
