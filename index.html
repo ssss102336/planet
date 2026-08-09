@@ -994,10 +994,69 @@ function closeGuide() {
 /* =========================
    카메라
 ========================= */
+    let qrScanTimer = null;
 
+function startQRScanner() {
+    const video = document.getElementById("camera");
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    function scan() {
+        if (!stream || video.readyState < 2) {
+            qrScanTimer = requestAnimationFrame(scan);
+            return;
+        }
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const imageData = ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        const code = jsQR(
+            imageData.data,
+            imageData.width,
+            imageData.height
+        );
+
+        if (code) {
+            window.location.href = code.data;
+            return;
+        }
+
+        qrScanTimer = requestAnimationFrame(scan);
+    }
+
+    scan();
+}
+      
 let stream = null;
 
+function stopCamera() {
+    if (stream) {
+        stream
+            .getTracks()
+            .forEach(track => track.stop());
 
+        stream = null;
+    }
+
+    document
+        .getElementById("cameraScreen")
+        .classList.remove("show");
 async function startCamera() {
 
     try {
@@ -1029,7 +1088,8 @@ async function startCamera() {
         document
             .getElementById("cameraScreen")
             .classList.add("show");
-
+          
+startQRScanner();
 
     }
 
