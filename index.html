@@ -1120,11 +1120,10 @@ function startQRScanner() {
             imageData.height
         );
 
-        if (code) {
-    showPuzzle(code.data);
+      if (code) {
+    window.location.href = code.data;
     return;
 }
-
         qrScanTimer = requestAnimationFrame(scan);
     }
 
