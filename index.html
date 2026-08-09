@@ -1127,50 +1127,27 @@ function startQRScanner() {
             imageData.height
         );
 
-      if (code) {
-    window.location.href = code.data;
-    return;
-}
+        if (code) {
+            window.location.href = code.data;
+            return;
+        }
+
         qrScanTimer = requestAnimationFrame(scan);
     }
 
     scan();
 }
-      
+
 function stopCamera() {
-
     if (stream) {
-
         stream
             .getTracks()
             .forEach(track => track.stop());
 
         stream = null;
-
     }
-
 
     document
         .getElementById("cameraScreen")
         .classList.remove("show");
-
-}
-function showPuzzle(url) {
-    document.getElementById("puzzleFrame").src = url;
-    document.getElementById("puzzleOverlay").style.display = "block";
-
-    stopCamera();
-}
-
-function closePuzzle() {
-    document.getElementById("puzzleFrame").src = "";
-    document.getElementById("puzzleOverlay").style.display = "none";
-
-    startCamera();
-}
-</script>
-
-
-</body>
-
-</html>
+}</html>
