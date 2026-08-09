@@ -723,7 +723,14 @@ h1 {
 
 </style>
       
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js">
+      window.addEventListener("load", function () {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get("camera") === "on") {
+        startCamera();
+    }
+});</script>
       
 </head>
 
