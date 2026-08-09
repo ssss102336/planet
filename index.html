@@ -940,6 +940,29 @@ h1 {
         playsinline>
     </video>
 
+      <div id="puzzleOverlay" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:white;
+">
+    <iframe
+        id="puzzleFrame"
+        style="width:100%; height:100%; border:none;">
+    </iframe>
+
+    <button
+        onclick="closePuzzle()"
+        style="
+            position:absolute;
+            top:20px;
+            right:20px;
+            z-index:10000;
+        ">
+        ✕ 닫기
+    </button>
+</div>
 
     <div class="camera-guide">
 
@@ -1098,10 +1121,9 @@ function startQRScanner() {
         );
 
         if (code) {
-            // QR에 들어있는 주소로 이동
-            window.location.href = code.data;
-            return;
-        }
+    showPuzzle(code.data);
+    return;
+}
 
         qrScanTimer = requestAnimationFrame(scan);
     }
@@ -1127,7 +1149,19 @@ function stopCamera() {
         .classList.remove("show");
 
 }
+function showPuzzle(url) {
+    document.getElementById("puzzleFrame").src = url;
+    document.getElementById("puzzleOverlay").style.display = "block";
 
+    stopCamera();
+}
+
+function closePuzzle() {
+    document.getElementById("puzzleFrame").src = "";
+    document.getElementById("puzzleOverlay").style.display = "none";
+
+    startCamera();
+}
 </script>
 
 
