@@ -9,6 +9,9 @@
 
 <title>어린왕자와 행성</title>
 
+<!-- QR 인식 라이브러리 -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
 <style>
 
 /* =========================
@@ -68,7 +71,9 @@ body {
 }
 
 
-/* 별 */
+/* =========================
+   별
+========================= */
 
 .star {
 
@@ -83,7 +88,8 @@ body {
 
     opacity: .5;
 
-    animation: twinkle 4s infinite ease-in-out;
+    animation:
+        twinkle 4s infinite ease-in-out;
 
 }
 
@@ -100,9 +106,7 @@ body {
 }
 
 
-/* =========================
-   별 위치
-========================= */
+/* 별 위치 */
 
 .star:nth-child(1) {
     top: 8%;
@@ -209,8 +213,6 @@ body {
 }
 
 
-/* 작은 제목 */
-
 .eyebrow {
 
     font-size: 11px;
@@ -223,8 +225,6 @@ body {
 
 }
 
-
-/* 제목 */
 
 h1 {
 
@@ -242,8 +242,6 @@ h1 {
 }
 
 
-/* 본문 */
-
 .story-text {
 
     font-size:
@@ -257,8 +255,6 @@ h1 {
 
 }
 
-
-/* 마지막 문장 */
 
 .final-line {
 
@@ -286,7 +282,9 @@ h1 {
 
     border-radius: 40px;
 
-    border: 1px solid rgba(255,255,255,.35);
+    border:
+        1px solid
+        rgba(255,255,255,.35);
 
     background:
         rgba(255,255,255,.06);
@@ -546,7 +544,20 @@ h1 {
 }
 
 
-/* 카메라 위 안내 */
+/* =========================
+   QR 인식용 캔버스
+========================= */
+
+#qrCanvas {
+
+    display: none;
+
+}
+
+
+/* =========================
+   카메라 위 안내
+========================= */
 
 .camera-guide {
 
@@ -589,7 +600,9 @@ h1 {
 }
 
 
-/* 카메라 프레임 */
+/* =========================
+   카메라 프레임
+========================= */
 
 .scan-frame {
 
@@ -660,7 +673,43 @@ h1 {
 }
 
 
-/* 카메라 닫기 */
+/* =========================
+   QR 인식 중 표시
+========================= */
+
+.scan-message {
+
+    position: absolute;
+
+    left: 50%;
+    bottom: 110px;
+
+    transform:
+        translateX(-50%);
+
+    width: max-content;
+
+    max-width: 85vw;
+
+    padding: 10px 18px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(0,0,0,.55);
+
+    color: white;
+
+    font-size: 12px;
+
+    text-align: center;
+
+}
+
+
+/* =========================
+   카메라 닫기
+========================= */
 
 .camera-close {
 
@@ -750,7 +799,6 @@ h1 {
     <div class="star"></div>
 
 
-
     <!-- =====================
          행성 소개
     ====================== -->
@@ -758,7 +806,6 @@ h1 {
     <main class="main">
 
         <section class="story">
-
 
             <div class="eyebrow">
                 THE LITTLE PRINCE · JOURNEY
@@ -826,7 +873,10 @@ h1 {
             <div class="final-line">
 
                 너무 두려워하지 말고 나아가,<br>
-                <strong>어둠 속 퍼즐을 찾아주세요.</strong>
+
+                <strong>
+                    어둠 속 퍼즐을 찾아주세요.
+                </strong>
 
             </div>
 
@@ -858,9 +908,7 @@ h1 {
     class="modal"
     id="guideModal">
 
-
     <div class="modal-box">
-
 
         <div class="modal-icon">
             ✦
@@ -916,7 +964,6 @@ h1 {
 
         </button>
 
-
     </div>
 
 </div>
@@ -928,7 +975,7 @@ h1 {
 ========================= -->
 
 <div
-     class="camera-screen"
+    class="camera-screen"
     id="cameraScreen">
 
 
@@ -938,6 +985,12 @@ h1 {
         playsinline>
     </video>
 
+
+    <!-- QR 인식용 캔버스 -->
+
+    <canvas id="qrCanvas"></canvas>
+
+
     <div class="camera-guide">
 
         <h2>
@@ -945,13 +998,22 @@ h1 {
         </h2>
 
         <p>
-            주변을 천천히 살펴보세요.
+            QR을 화면 안에 맞춰주세요.
         </p>
 
     </div>
 
 
     <div class="scan-frame"></div>
+
+
+    <div
+        class="scan-message"
+        id="scanMessage">
+
+        QR을 찾는 중...
+
+    </div>
 
 
     <button
@@ -992,23 +1054,52 @@ function closeGuide() {
 
 
 /* =========================
-   카메라
+   카메라 변수
 ========================= */
 
 let stream = null;
 
+let scanning = false;
+
+let animationFrame = null;
+
+let alreadyScanned = false;
+
+
+/* =========================
+   카메라 시작
+========================= */
 
 async function startCamera() {
 
     try {
 
+        /* 이미 켜져 있다면 먼저 종료 */
+
+        if (stream) {
+
+            stopCamera();
+
+        }
+
+
         stream =
             await navigator.mediaDevices.getUserMedia({
 
                 video: {
+
                     facingMode: {
                         ideal: "environment"
+                    },
+
+                    width: {
+                        ideal: 1280
+                    },
+
+                    height: {
+                        ideal: 720
                     }
+
                 },
 
                 audio: false
@@ -1016,9 +1107,11 @@ async function startCamera() {
             });
 
 
-        document
-            .getElementById("camera")
-            .srcObject = stream;
+        const video =
+            document.getElementById("camera");
+
+
+        video.srcObject = stream;
 
 
         document
@@ -1031,16 +1124,169 @@ async function startCamera() {
             .classList.add("show");
 
 
+        alreadyScanned = false;
+
+        scanning = true;
+
+
+        document
+            .getElementById("scanMessage")
+            .textContent =
+            "QR을 찾는 중...";
+
+
+        /* 영상이 준비되면 QR 스캔 시작 */
+
+        video.onloadedmetadata = () => {
+
+            video.play();
+
+            scanQRCode();
+
+        };
+
+
     }
 
     catch (error) {
 
+        console.error(error);
+
         alert(
-            "카메라를 사용할 수 없습니다.\n" +
+            "카메라를 사용할 수 없습니다.\n\n" +
             "브라우저의 카메라 권한을 확인해주세요."
         );
 
     }
+
+}
+
+
+/* =========================
+   QR 코드 스캔
+========================= */
+
+function scanQRCode() {
+
+    if (!scanning) {
+        return;
+    }
+
+
+    if (alreadyScanned) {
+        return;
+    }
+
+
+    const video =
+        document.getElementById("camera");
+
+    const canvas =
+        document.getElementById("qrCanvas");
+
+    const context =
+        canvas.getContext("2d", {
+            willReadFrequently: true
+        });
+
+
+    /* 영상 크기 확인 */
+
+    if (
+        video.readyState ===
+        video.HAVE_ENOUGH_DATA
+    ) {
+
+        canvas.width =
+            video.videoWidth;
+
+        canvas.height =
+            video.videoHeight;
+
+
+        context.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        const imageData =
+            context.getImageData(
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+
+
+        /* jsQR로 QR 확인 */
+
+        const code =
+            jsQR(
+                imageData.data,
+                imageData.width,
+                imageData.height,
+                {
+                    inversionAttempts:
+                        "dontInvert"
+                }
+            );
+
+
+        /* QR 발견 */
+
+        if (code) {
+
+            alreadyScanned = true;
+
+            scanning = false;
+
+
+            document
+                .getElementById("scanMessage")
+                .textContent =
+                "퍼즐을 확인하고 있습니다...";
+
+
+            /* 카메라 종료 */
+
+            stopCamera();
+
+
+            /*
+             * QR 안에 들어있는 주소로 이동
+             *
+             * 예:
+             * https://ssss102336.github.io/puzzle/?piece=1
+             *
+             * QR이 어떤 주소를 가지고 있든
+             * 그대로 이동한다.
+             */
+
+            setTimeout(() => {
+
+                window.location.href =
+                    code.data;
+
+            }, 300);
+
+
+            return;
+
+        }
+
+    }
+
+
+    /* 다음 프레임에서 다시 검사 */
+
+    animationFrame =
+        requestAnimationFrame(
+            scanQRCode
+        );
 
 }
 
@@ -1051,15 +1297,40 @@ async function startCamera() {
 
 function stopCamera() {
 
+    scanning = false;
+
+    alreadyScanned = false;
+
+
+    if (animationFrame) {
+
+        cancelAnimationFrame(
+            animationFrame
+        );
+
+        animationFrame = null;
+
+    }
+
+
     if (stream) {
 
         stream
             .getTracks()
-            .forEach(track => track.stop());
+            .forEach(track => {
+                track.stop();
+            });
 
         stream = null;
 
     }
+
+
+    const video =
+        document.getElementById("camera");
+
+
+    video.srcObject = null;
 
 
     document
@@ -1067,6 +1338,71 @@ function stopCamera() {
         .classList.remove("show");
 
 }
+
+
+/* =========================
+   QR 퍼즐 페이지에서
+   다시 돌아왔을 때
+========================= */
+
+/*
+   퍼즐 페이지의 돌아가기 버튼을
+
+   행성페이지주소?scan=1
+
+   형태로 설정하면
+
+   행성 페이지로 돌아온 순간
+   카메라 화면을 자동으로 다시 띄운다.
+*/
+
+window.addEventListener(
+    "load",
+    () => {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        if (
+            params.get("scan") === "1"
+        ) {
+
+            setTimeout(() => {
+
+                startCamera();
+
+            }, 500);
+
+        }
+
+    }
+);
+
+
+/* =========================
+   페이지를 떠날 때
+   카메라 정리
+========================= */
+
+window.addEventListener(
+    "pagehide",
+    () => {
+
+        if (stream) {
+
+            stream
+                .getTracks()
+                .forEach(track => {
+                    track.stop();
+                });
+
+        }
+
+    }
+);
 
 </script>
 
